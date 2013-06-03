@@ -1,12 +1,12 @@
-# introduction
+# introdução
 
-This document covers the basics of how to write [node.js](http://nodejs.org/)
-programs with [streams](http://nodejs.org/docs/latest/api/stream.html).
+Este documento cobre coisas basicas de como escrever aplicações com [node.js](http://nodejs.org/)
+utilizando [streams](http://nodejs.org/docs/latest/api/stream.html).
 
 ```
-"We should have some ways of connecting programs like garden hose--screw in
-another segment when it becomes necessary to massage data in
-another way. This is the way of IO also."
+"Nós temos muitas maneiras de conectar programas como mangueiras de jardim e parafusos,
+em um outro segmento onde se tornam necessarias para enviar menssagens em uma outra
+direção. Esse meio é o do IO."
 ```
 
 [Doug McIlroy. October 11, 1964](http://cm.bell-labs.com/who/dmr/mdmpipe.html)
@@ -15,27 +15,27 @@ another way. This is the way of IO also."
 
 ***
 
-Streams come to us from the
-[earliest days of unix](http://www.youtube.com/watch?v=tc4ROCJYbm0)
-and have proven themselves over the decades as a dependable way to compose large
-systems out of small components that
-[do one thing well](http://www.faqs.org/docs/artu/ch01s06.html).
-In unix, streams are implemented by the shell with `|` pipes.
-In node, the built-in
-[stream module](http://nodejs.org/docs/latest/api/stream.html)
-is used by the core libraries and can also be used by user-space modules.
-Similar to unix, the node stream module's primary composition operator is called
-`.pipe()` and you get a backpressure mechanism for free to throttle writes for
-slow consumers.
+Streams chegaram até nós através dos
+[primeiros dias de vida do unix](http://www.youtube.com/watch?v=tc4ROCJYbm0)
+e provaram-se por muitas decadas como um meio seguro de compor grandes
+sistemas de pequenas partes que
+[fazem uma coisa bem](http://www.faqs.org/docs/artu/ch01s06.html).
+No unix, streams são implementados pelo shell com `|` pipes.
+No node, vem embutido no
+[módulo de stream](http://nodejs.org/docs/latest/api/stream.html)
+é usado pelas partes do núcleo do node e pode ser usado pelo usuario em seus módulo "user-space".
+Similar ao unix, os módulos de stream no node tem como composição primaria o operador que chama-se
+`.pipe()` e você utiliza em um mecanismo de contrapressão para uma livre escrita estrangulando
+consumidores lentos.
 
-Streams can help to
-[separate your concerns](http://www.c2.com/cgi/wiki?SeparationOfConcerns)
-because they restrict the implementation surface area into a consistent
-interface that can be
-[reused](http://www.faqs.org/docs/artu/ch01s06.html#id2877537).
-You can then plug the output of one stream to the input of another and
-[use libraries](http://npmjs.org) that operate abstractly on streams to
-institute higher-level flow control.
+Streams podem ajudar a
+[separar suas preocupações](http://www.c2.com/cgi/wiki?SeparationOfConcerns)
+porque eles restringem a implementação em uma area superficial em uma concistente
+interface que pode ser muito bem
+[reutilizada](http://www.faqs.org/docs/artu/ch01s06.html#id2877537).
+Você pode conectar o fluxo de saida em uma entrada de uma outra lib e 
+[usar libs](http://npmjs.org) que operam de modo abstrato em outros streams para
+instituir o controle do fluxo de um alto-nivel.
 
 Streams are an important component of
 [small-program design](https://michaelochurch.wordpress.com/2012/08/15/what-is-spaghetti-code/)
@@ -43,6 +43,13 @@ and [unix philosophy](http://www.faqs.org/docs/artu/ch01s06.html)
 but there are many other important abstractions worth considering.
 Just remember that [technical debt](http://c2.com/cgi/wiki?TechnicalDebt)
 is the enemy and to seek the best abstractions for the problem at hand.
+
+Streams são um importante component de
+[projeção para pequenos programas](https://michaelochurch.wordpress.com/2012/08/15/what-is-spaghetti-code/)
+e podendo seguir a [filosofia do unix](http://www.faqs.org/docs/artu/ch01s06.html)
+mas tendo outras abstrações importantes para serem consideradas.
+Somente lembre-se que o [débito técnica](http://www.faqs.org/docs/artu/ch01s06.html)
+é o inimigo para buscar as melhores abstrações que estão na sua mão. 
 
 ![brian kernighan](http://substack.net/images/kernighan.png)
 
