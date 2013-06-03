@@ -55,11 +55,11 @@ Somente lembre-se que o [débito técnica](http://www.faqs.org/docs/artu/ch01s06
 
 ***
 
-# why you should use streams
+# Por que você deve usar streams
 
-I/O in node is asynchronous, so interacting with the disk and network involves
-passing callbacks to functions. You might be tempted to write code that serves
-up a file from disk like this:
+I/O no node é assíncrono, então a interação com o disco e rede envolve
+a passagem de funções como callbacks. Você pode ser tentado a escrever um código que serve
+um arquivo do disco dessa maneira:
 
 ``` js
 var http = require('http');
@@ -77,15 +77,14 @@ var server = http.createServer(function (req, res) {
 server.listen(8000);
 ```
 
-This code works but it's bulky and buffers up the entire `data.txt` file into
-memory for every request before writing the result back to clients. If
-`data.txt` is very large, your program could start eating a lot of memory as it
-serves lots of users concurrently. The latency will also be high as users will
-need to wait for the entire file to be read before they start receiving the
-contents.
+Este código funciona mas é volumoso e joga todo o conteúdo de `data.txt` na
+memória varias requisições antes de escrever o resultado nos clientes. Se
+servindo varios usuarios concorrentes. A latência será alta fazendo com que os
+usuarios esperem pelo termino da leitura do arquivo para o inicio do recebimento
+do conteúdo.
 
-Luckily both of the `(req, res)` arguments are streams, which means we can write
-this in a much better way using `fs.createReadStream()` instead of
+Felizmente ambos os argumentos `(req, res)` são streams, signficando que pode ser escrito
+de uma maneira muito melhor usando `fs.createReadStream()` em vez de
 `fs.readFile()`:
 
 ``` js
@@ -103,16 +102,15 @@ var server = http.createServer(function (req, res) {
 server.listen(8000);
 ```
 
-Here `.pipe()` takes care of listening for `'data'` and `'end'` events from the
-`fs.createReadStream()`. This code is not only cleaner, but now the `data.txt`
-file will be written to clients one chunk at a time immediately as they are
-received from the disk.
+Aqui `.pipe()` cuida de quem escuta os eventos `'data'` e `'end'` do
+`fs.createReadStream()`. Este código não esta muito limpo, mas agora o arquivo `data.txt`
+é escrito em um pedaço para os clientes no mesmo momento em que ele é recebido do disco.
 
-Using `.pipe()` has other benefits too, like handling backpressure automatically
-so that node won't buffer chunks into memory needlessly when the remote client
-is on a really slow or high-latency connection.
+Usando `.pipe()` tem outros benefícios também, como lidar com contrapressões automaticamente
+então o node não amortecera pedaços na memória desnecessariamente quando o cliente remoto
+estiver conecatado tornando essa ligação lenta e com uma latência maior.
 
-Want compression? There are streaming modules for that too!
+Precisa de compressão? Temos módulos de streaming para isso também!
 
 ``` js
 var http = require('http');
@@ -131,17 +129,16 @@ var server = http.createServer(function (req, res) {
 server.listen(8000);
 ```
 
-Now our file is compressed for browsers that support gzip or deflate! We can
-just let [oppressor](https://github.com/substack/oppressor) handle all that
-content-encoding stuff.
+Agora nosso arquivo esta comprimido para navegadores que suportam gzip ou esvaziamento 'deflate'! Nós podemos
+somente deixar o [opressor](https://github.com/substack/oppressor) lidar com todo o conteúdo dos dados codificadas.
 
-Once you learn the stream api, you can just snap together these streaming
-modules like lego bricks or garden hoses instead of having to remember how to push
-data through wonky non-streaming custom APIs.
+Uma vez que você aprende a api de stream, você pode apenas tirar encaixa os módulos de streaming
+como peças de lego ou mangueiras de jardim em vez de ter que lembrar de como empurrar dados
+através de vacilantes APIs personalizadas e de não-streaming.
 
-Streams make programming in node simple, elegant, and composable.
+Streams fazem da programação no node simples, elegante e combinável.
 
-# basics
+# básico
 
 Streams are just
 [EventEmitters](http://nodejs.org/docs/latest/api/events.html#events_class_events_eventemitter)
@@ -150,32 +147,37 @@ that have a
 function and expected to act in a certain way depending if the stream is
 readable, writable, or both (duplex).
 
-To create a new stream, just do:
+Streams são somente
+[Emissores de Eventos](http://nodejs.org/docs/latest/api/events.html#events_class_events_eventemitter)
+que tem um uma função
+[.pipe()](http://nodejs.org/docs/latest/api/stream.html#stream_stream_pipe_destination_options)
+e que esperam para agir em uma determinada cituação dependendo se o stream é
+readable (podem ser apenas lidos), writable (podem ser apenas escritos), ou ambos (duplex).
+
+Para criar um novo steam, apenas faça assim:
 
 ``` js
 var Stream = require('stream');
 var s = new Stream;
 ```
 
-This new stream doesn't yet do anything because it is neither readable nor
-writable.
+Este novo stream não tem nada ainda porque não se pode ler ou escrever.
 
-## readable
+## readable ( leitura )
 
-To make that stream `s` into a readable stream, all we need to do is set the
-`readable` property to true:
+Para fazer deste stream `s` um stream readable ( para leitura ), tudo o que precisamos fazer é
+definir a proprieade `readable` como `true`:
 
 ``` js
 s.readable = true
 ```
 
-Readable streams emit many `'data'` events and a single `'end'` event.
-Your stream shouldn't emit any more `'data'` events after it emits the `'end'`
-event.
+Streams legíveis emitem muitos eventos `'data'` e um unico evento `'end'`.
+Seu stream não ira emitir nenhum evento `'data'` após o evento `'end'` ter sido emitido.
 
-This simple readable stream emits one `'data'` event per second for 5 seconds,
-then it ends. The data is piped to stdout so we can watch the results as they
-happen.
+Este simples stream readable ( legível ) emite um evento `'data'` por secundo por 5 segundos,
+logo em seguida ele termina. Os dados são canalizados até a stdout ( saida padrão ) para que possamos
+assistir os resultados como eles acontecem.
 
 ``` js
 var Stream = require('stream');
@@ -209,23 +211,26 @@ substack : ~ $ node rs.js
 substack : ~ $ 
 ```
 
-In this example the `'data'` events have a string payload as the first argument.
-Buffers and strings are the most common types of data to stream but it's
-sometimes useful to emit other types of objects.
+Neste exemplo os eventos `'data'` tem uma carga encadeada (`string`) como primeiro argumeto.
+Buffers e strings são os tipos mais comuns de dados para o stream mas as vezes
+é mais util emitir outros tipos de objetos.
 
 Just make sure that the types you're emitting as data is compatible with the
 types that the writable stream you're piping into expects.
 Otherwise you can pipe into an intermediary conversion or parsing stream before
 piping to your intended destination.
 
-## writable
+Apenas certifique-se que os tipos que você esta emitindo são compativeis com os
+tipos que o fluxo de escrita que estão sendo canalizados são o esparado.
 
-Writable streams are streams that can accept input. To create a writable stream,
-set the `writable` attribute to `true` and define `write()`, `end()`, and
+## writable (gravável)
+
+Streams graváveis são fluxos que aceitam entrada. Para criar um stream gravável,
+defina o atributo `writable` como `true` e defina também `write()`, `end()`, e
 `destroy()`.
 
-This writable stream will count all the bytes from an input stream and print the
-result on a clean `end()`. If the stream is destroyed it will do nothing.
+Esse fluxo que pode ser gravado conta todos os bytes de um fluxo de entrada e imprime o
+resultado em um `end()` limpo. Se o stream é destruido não fara nada.
 
 ``` js
 var Stream = require('stream');
@@ -250,7 +255,7 @@ s.destroy = function () {
 };
 ```
 
-If we pipe a file to this writable stream:
+Se nós canalizamos um arquivo para este fluxo gravável:
 
 ``` js
 var fs = require('fs');
@@ -266,65 +271,79 @@ One thing to watch out for is the convention in node to treat `end(buf)` as a
 `write(buf)` then an `end()`. If you skip this it could lead to confusion
 because people expect end to behave the way it does in core.
 
-## backpressure
+Uma coisa que devemos ficar atentos nesta convensão do node é que para tratar `end(buf)` como um
+`write(buf)` em seguida, um `end()`. Se você pula estes passo, pode acabar criando uma confusão
+porque as pessoas esperam o comportamento como se aplicado no núcleo e aqui você esta personalizando eles.
 
-Backpressure is the mechanism that streams use to make sure that readable
-streams don't emit data faster than writable streams can consume data.
+## contrapressão
 
-Note: the API for handling backpressure is changing substantially in future
-versions of node (> 0.8). `pause()`, `resume()`, and `emit('drain')` are
-scheduled for demolition. The notice has been on display in the local planning
-office for months.
+Contrapressão é o mecanismo que os streams usam para certificar que readable
+streams não emitem dados mais rápidos que writable possa consumir dados.
 
-In order to do backpressure correctly readable streams should
-implement `pause()` and `resume()`. Writable streams return `false` in
-`.write()` when they want the readable streams piped into them to slow down and
-emit `'drain'` when they're ready for more data again.
+Note: a API que cuida da contrapressão serão modificadas no futuro
+versão do node maiores que a (> 0.8). `pause()`, `resume()`, e `emit('drain')` são
+programadas para demolição. O aviso foi exposto no escritório como planejamento local a meses.
 
-### writable stream backpressure
+Na ordem para executar a contrapressão corretamente para fluxos legíveis deveram
+ser implementados `pause()` and `resume()`. Fluxos graváveis retornam `false` no
+`.write()` quando é necessario que fluxo legível canalizado em uma velocidade branda e
+emitindo `'drain'` onde estarão prontos para mais dados outra vez.
+
+### writable stream (contrapressão de fluxos graváveis) 
 
 When a writable stream wants a readable stream to slow down it should return
 `false` in its `.write()` function. This causes the `pause()` to be called on
 each readable stream source.
 
+Quando um fluxo legível necessita que um fluxo gravável tenha uma redução de velocidade ele 
+retornara `false` na função `.write()`. Isto causara em uma necessidade de chamar `pause()`
+em cada fonte de fluxo legivel.
+
 When the writable stream is ready to start receiving data again, it should emit
 the `'drain'` event. Emitting `'drain'` causes the `resume()` function to be
 called on each readable stream source.
 
-### readable stream backpressure
+Quando o fluxo gravável esta pronto para iniciar o recebimento de dados novamente, ele emitira
+o evento `'drain'`. Emitindo `'drain'` causara o a necessidade de chamar a função `resume()`
+para cada fonte de fluxo legivel.
 
-When `pause()` is called on a readable stream, it means that a downstream
-writable stream wants the upstream to slow down. The readable stream that
-`pause()` was called on should stop emitting data but that isn't always
-possible.
+### readable stream (contrapressão de fluxos legíveis) 
+
+Quando `pause()` é chamado em um fluxo legível, significara que um fluxo escrito
+estiver sofrendo uma caida (ato de ler) o fluxo escrita tera que sofrer uma baixa de velocidade
+no modo como isso acontece. No fluxo legível quando chamado `pause()` sofre a parada de emição 
+de dados sempre que possivel.
 
 When the downstream is ready for more data, the readable stream's `resume()`
 function will be called.
 
-## pipe
+Quando uma caida esta em busca de mais dados para ler, o fluxo legível teve `resume()`
+chamado.
 
-`.pipe()` is the glue that shuffles data from readable streams into writable
-streams and handles backpressure. The pipe api is just:
+## pipe (tubo)
+
+`.piep()` é uma cóla de dados embaralhados de um fluxo legível para um fluxo
+gravável e que é tratado com uma contrapressão. O api é somente isso:
 
 ```
-src.pipe(dst)
+src.pipe(dst) // fonte criando uma passagem para o destino
 ```
 
-for a readable stream `src` and a writable stream `dst`. `.pipe()` returns the
-`dst` so if `dst` is also a readable stream, you can chain `.pipe()` calls
-together like:
+para um fluxo legível `src` e par um fluxo gravável `dst`. `.pipe()` retorna o
+`dst` então se `dst` esta habil a ler um fluxo, você podera `.pipe()` encadear
+as chamadas assim:
 
 ``` js
 a.pipe(b).pipe(c).pipe(d)
 ```
 
-which resembles what you might do in the shell with the `|` operator:
+que assemelha-se ao operador `|` (pipe 'tubo') do shell:
 
 ```
 a | b | c | d
 ```
 
-The `a.pipe(b).pipe(c).pipe(d)` usage is the same as:
+O use de `a.pipe(b).pipe(c).pipe(d)` é igual ao de:
 
 ```
 a.pipe(b);
@@ -332,83 +351,81 @@ b.pipe(c);
 c.pipe(d);
 ```
 
-The stream implementation in core is just an event emitter with a pipe function.
-`pipe()` is pretty short. You should read
-[the source code](https://github.com/joyent/node/blob/master/lib/stream.js).
+A implementação de stream no núcleo é somente um evento que emite com uma função `pipe`.
+`pipe()` é bem curta. E você pode ler o
+[código fonte](https://github.com/joyent/node/blob/master/lib/stream.js).
 
-## terms
+## termos 
 
-These terms are useful for talking about streams.
+Estes termos são uteis para falar sobre fluxos.
 
-### through
+### through (através)
 
-Through streams are simple readable/writable filters that transform input and
-produce output.
+Fluxos atravessados são simplesmente filtros legíveis/graváveis que transformam entrada e
+produzem saida.
 
 ### duplex
 
-Duplex streams are readable/writable and both ends of the stream engage
-in a two-way interaction, sending back and forth messages like a telephone. An
-rpc exchange is a good example of a duplex stream. Any time you see something
-like:
+Fluxos duplex são legíveis/graváveis e ambos terminam para o fluxo empenhar um caminho
+de mão dupla com interação, enviando de volta e em diante mensagens como um telefone. Uma
+troca rpc é um bom exemplo de um fluxo duplex. A todo momento você irá ver algo assim:
 
 ``` js
 a.pipe(b).pipe(a)
 ```
 
-you're probably dealing with a duplex stream.
+você provávelmenta estara lidando com um fluxo duplex.
 
-## read more
+## leia mais sobre 
 
-* [core stream documentation](http://nodejs.org/docs/latest/api/stream.html#stream_stream)
-* [notes on the stream api](http://maxogden.com/node-streams)
-* [why streams are awesome](http://blog.dump.ly/post/19819897856/why-node-js-streams-are-awesome)
-* [notes on event-stream](http://thlorenz.com/#/blog/post/event-stream)
+* [documentação do módulo de stream que esta presente no núcleo](http://nodejs.org/docs/latest/api/stream.html#stream_stream)
+* [notas sobre a api de stream](http://maxogden.com/node-streams)
+* [porque streams são incríveis](http://blog.dump.ly/post/19819897856/why-node-js-streams-are-awesome)
+* [nota sobre event-stream](http://thlorenz.com/#/blog/post/event-stream)
 
-## the future
+## O futuro 
 
-A big upgrade is planned for the stream api in node 0.9.
-The basic apis with `.pipe()` will be the same, only the internals are going to
-be different. The new api will also be backwards compatible with the existing
-api documented here for a long time.
+Uma grande atualização foi planejada para o api de stream no node 0.9
+O basico das apis como `.pipe()` continuaram as mesmas, internamente será diferente.
+A nova api tera uma retrocompatibilidade com a api existente documentada por um longo tempo.
 
-You can check the
-[readable-stream](https://github.com/isaacs/readable-stream) repo to see what
-these future streams will look like.
+Você pode verificar o
+repositório [readable-stream](https://github.com/isaacs/readable-stream)
+para ver como as mudanças irão parecer.
 
 ***
 
-# built-in streams
+# streams embutidas
 
-These streams are built into node itself.
+Esses fluxos são contruidos no próprio node.
 
-## process
+## process (processo)
 
 ### [process.stdin](http://nodejs.org/docs/latest/api/process.html#process_process_stdin)
 
-This readable stream contains the standard system input stream for your program.
+Esse fluxo legível contem o padrão de entrada no sistema para o seu programa.
 
-It is paused by default but the first time you refer to it `.resume()` will be
-called implicitly on the
-[next tick](http://nodejs.org/docs/latest/api/process.html#process_process_nexttick_callback).
+Ele é pausado por padrão mas da primeira vez ele refere-se a ele `.resume()` que faz
+a chamada implicida no 
+[next tick](http://nodejs.org/docs/latest/api/process.html#process_process_nexttick_callback) (próxima escala).
 
-If process.stdin is a tty (check with
+Se process.stdin é um tty (verifique
 [`tty.isatty()`](http://nodejs.org/docs/latest/api/tty.html#tty_tty_isatty_fd))
-then input events will be line-buffered. You can turn off line-buffering by
-calling `process.stdin.setRawMode(true)` BUT the default handlers for key
-combinations such as `^C` and `^D` will be removed.
+segue uma entrada de eventos que é amortecida linearmente. Você pode desligar
+o amortecimento linear chamando `process.stdin.setRawMode(true)` MAS os lidadores padrões para
+chaves como `^C` e `^D` serão removidas.
 
 ### [process.stdout](http://nodejs.org/api/process.html#process_process_stdout)
 
-This writable stream contains the standard system output stream for your program.
+Este fluxo gravável contem a saida padrão do sistema do seu programa.
 
-`write` to it if you want send data to stdout
+`write(escreve)` nele se você precisa enviar dados para strout 
 
 ### [process.stderr](http://nodejs.org/api/process.html#process_process_stderr)
 
-This writable stream contains the standard system error stream for your program.
+Este fluxo gravável contem saida padrão de erro do sistema para o seu programa.
 
-`write` to it if you want send data to stderr
+`write(escreve)` para ele se você precisa enviar algum erro para stderr
 
 ## child_process.spawn()
 
@@ -422,11 +439,10 @@ This writable stream contains the standard system error stream for your program.
 
 ### [net.connect()](http://nodejs.org/docs/latest/api/net.html#net_net_connect_options_connectionlistener)
 
-This function returns a [duplex stream] that connects over tcp to a remote
-host.
+Esta funão retorna a [fluxo duplex] que conecta-se atravês do protocolo `tcp` a um host remoto.
 
-You can start writing to the stream right away and the writes will be buffered
-until the `'connect'` event fires.
+Você pode iniciar escrevendo em um fluxo de modo correto e a escrite sera amortecida
+até `'connect'` for acionado.
 
 ### net.createServer()
 
