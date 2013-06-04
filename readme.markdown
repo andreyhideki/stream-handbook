@@ -474,13 +474,13 @@ até `'connect'` for acionado.
 
 ## [concat-stream](https://github.com/maxogden/node-concat-stream)
 
-concat-stream will buffer up stream contents into a single buffer.
-`concat(cb)` just takes a single callback `cb(body)` with the buffered
-`body` when the stream has finished.
+concat-stream amortecem conteudos de um fluxo em um unico buffer.
+`contact(cb)` recebe somente um callback `cb(body)` com o `body` amortecido
+onde um fluxo é finalizado.
 
-For example, in this program, the concat callback fires with the body string
-`"beep boop"` once `cs.end()` is called.
-The program takes the body and upper-cases it, printing `BEEP BOOP.`
+Por exemplo neste programa, o método `contact` aciona a função de callback com o corpo que é um `string`
+`"beep boop"` uma vez que o `cs.end()` é chamado.
+O programa recebe o corpo e transforma todos os caracteres em maisculos, imprimindo `BEEP BOOP.`
 
 ``` js
 var concat = require('concat-stream');
@@ -498,8 +498,8 @@ $ node concat.js
 BEEP BOOP.
 ```
 
-Here's an example usage of concat-stream that will parse incoming url-encoded
-form data and reply with a stringified JSON version of the form parameters:
+Aqui um example de uso do concat-stream ele ira analisar a entrada que é uma url codificada
+que é um dado do formulario e responde com uma versão em JSON em formato de texto dos parametros do formulario: 
 
 ``` js
 var http = require('http');
@@ -558,18 +558,18 @@ $ curl -X POST -d 'beep=boop&dinosaur=trex' http://localhost:5005
 
 ## [scuttlebutt](https://github.com/dominictarr/scuttlebutt)
 
-[scuttlebutt](https://github.com/dominictarr/scuttlebutt) can be used for
-peer-to-peer state synchronization with a mesh topology where nodes might only
-be connected through intermediaries and there is no node with an authoritative
-version of all the data.
+[scuttlebutt](https://github.com/dominictarr/scuttlebutt) pode ser utilizados para
+um estado de sincronização de pessoa-para-pessoa (p2p) com uma malha topológica onde os nós
+só podem estar conectados através de intermediários e não havera nó com uma versão oficial
+de todo o dado.
 
-The kind of distributed peer-to-peer network that
-[scuttlebutt](https://github.com/dominictarr/scuttlebutt) provides is especially
-useful when nodes on different sides of network barriers need to share and
-update the same state. An example of this kind of network might be browser
-clients that send messages through an http server to each other and backend
-processes that the browsers can't directly connect to. Another use-case might be
-systems that span internal networks since IPv4 addresses are scarce.
+O tipo de rede com distribuição de pessoa-para-pessoa 
+[scuttlebutt](https://github.com/dominictarr/scuttlebutt) provem uma especialidade
+util quando os nós em diferentes lados da rede beiram a necessidade de compartilhar e
+atualizar o mesmo estado. Um exemplo deste tipo de rede podem ser clientes de navegação
+que enviam mensagens através de um servidor http para outro é processa isso no bastidor
+onde o navagador não tem uma conexão direta com um terceiro. Outro caso de uso seriam
+os sistemas que abrangem redes internas utilizando IPv4 que são escassos.
 
 [scuttlebutt](https://github.com/dominictarr/scuttlebutt) uses a
 [gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol)
@@ -577,8 +577,14 @@ to pass messages between connected nodes so that state across all the nodes will
 [eventually converge](https://en.wikipedia.org/wiki/Eventual_consistency)
 on the same value everywhere.
 
-Using the `scuttlebutt/model` interface, we can create some nodes and pipe them
-to each other to create whichever sort of network we want:
+[scuttlebutt](https://github.com/dominictarr/scuttlebutt) usa um 
+[gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol)
+para passar mensagens entre nós conectados de modo que em todos os nós irão 
+[eventualmente convergir](https://en.wikipedia.org/wiki/Eventual_consistency)
+no mesmo valor em todas as partes.
+
+Usando a interface `scuttlebutt/model`, nós podemos criar varios nós e canaliza-los
+uns aos outros para criar qualquer tipo de rede que quisermos:
 
 ``` js
 var Model = require('scuttlebutt/model');
@@ -609,7 +615,7 @@ em.on('update', function (key, value, source) {
 am.set('x', 555);
 ```
 
-The network we've created is an undirected graph that looks like:
+A rede foi criada é forma um gráfico não-direcional que parece com isso:
 
 ```
 a <-> b <-> c
@@ -619,25 +625,23 @@ a <-> b <-> c
       d <-> e
 ```
 
-Note that nodes `a` and `e` aren't directly connected, but when we run this
-script:
+Nota-se que os nós `a` e `e` não estão diretamente conectados, mas quando executamos isse script:
 
 ```
 $ node model.js
 x => 555 from 1347857300518
 ```
 
-the value that node `a` set finds its way to node `e` by way of nodes `b` and
-`d`. Here all the nodes are in the same process but because
-[scuttlebutt](https://github.com/dominictarr/scuttlebutt) uses a
-simple streaming interface, the nodes can be placed on any process or server and
-connected with any streaming transport that can handle string data.
+o valor definido do nó `a` procura um caminho até o nó `e` que procura por `b` e
+`d`. Aqui todos os nós estão no mesmo processo mas porque o [scuttlebutt](https://github.com/dominictarr/scuttlebutt)
+usa uma simples interface de streaming, os nós são colocado em um processo ou servidos e
+conectados com qualquer transporte de fluxo que pode lidar com dados do tipo `string`.
 
-Next we can make a more realistic example that connects over the network and
-increments a counter variable.
+Depois você pode criar um exemplo mais realista conectando atráves de uma rede e
+incrementando uma variavel de contador.
 
-Here's the server which will set the initial `count` value to 0 and `count ++`
-every 320 milliseconds, printing all updates to count:
+Aqui um servidor que define um contador com com valor inicial de 0 na variavel `count` e incrementa `count++`
+a cada 320 milliseconds, imprimindo todas as atualizações do contador:
 
 ``` js
 var Model = require('scuttlebutt/model');
@@ -659,8 +663,8 @@ setInterval(function () {
 }, 320);
 ```
 
-Now we can make a client that connects to this server, updates the count on an
-interval, and prints all the updates it receives:
+Agora você pode criar um cliente que conecta-se como servidor, atualiza o contador em um
+intervalo, e imprime todas as atualizações recebidas:
 
 ``` js
 var Model = require('scuttlebutt/model');
@@ -686,11 +690,10 @@ m.on('update', function (key, value) {
 });
 ```
 
-The client is slightly trickier since it should wait until it has an update from
-somebody else to start updating the counter itself or else its counter would be
-zeroed.
+O cliente é um pouco mais complicado sabendo que ele tem que esperar por uma atualização de
+alguem para começar a atulizar o próprio contador or descobrir que o dele é zero.
 
-Once we get the server and some clients running we should see a sequence like this:
+Uma vez que você tenha o servidor e alguns clientes executando você vera uma execução sequencial similar a esta:
 
 ```
 count = 183
@@ -702,7 +705,7 @@ count = 188
 count = 189
 ```
 
-Occasionally on some of the nodes we might see a sequence with repeated values like:
+Ocasionalmente nos muitos nós você vera uma sequencia de valores repetidos assim:
 
 ```
 count = 147
@@ -713,16 +716,16 @@ count = 150
 count = 151
 ```
 
-These values are due to
+Estes valores são devido a
 [scuttlebutt's](https://github.com/dominictarr/scuttlebutt)
-history-based conflict resolution algorithm which is hard at work ensuring that the state of the system across all nodes is eventually consistent.
+historico baseado no algoritimo de resolução de conflito que esta trabalhando duro para garantir os estados ao redor do sistema em todos os nós eventualmente consistente.
 
-Note that the server in this example is just another node with the same
-privledges as the clients connected to it. The terms "client" and "server" here
-don't affect how the state synchronization proceeds, just who initiates the
-connection. Protocols with this property are often called symmetric protocols.
-See [dnode](https://github.com/substack/dnode) for another example of a
-symmetric protocol.
+Nota-se que o servidor neste exempli é somente um outro nó com os mesmos
+privilégios que os clientes conectados a ele. Os tempos "cliente" e "servidor" não
+afetam como o estado de sincronização provem, somente quem iniciou a
+conexão. Protocólos como este são chamados de protocólos simétricos.
+Veja [dnode](https://github.com/substack/dnode) para outros exemplos de
+um protocólo simétrico.
 
 ## [append-only](http://github.com/Raynos/append-only)
 
@@ -756,11 +759,11 @@ symmetric protocol.
 
 ## [JSONStream](https://github.com/dominictarr/JSONStream)
 
-Use this module to parse and stringify json data from streams.
+Use este módulo para analisar e traformar em texto puro dados de um fluxo.
 
-If you need to pass a large json collection through a slow connection or you
-have a json object that will populate slowly this module will let you parse data
-incrementally as it arrives.
+Se você precisar passar uma grande coleção de json através de uma conexão lenta ou você
+te um objeto json que ele popula lentamente um módulo fazendo uma analise incremental
+dos dados quando eles chegam.
 
 ## [json-scrape](https://github.com/substack/json-scrape)
 
@@ -799,10 +802,10 @@ incrementally as it arrives.
 
 ## [dnode](https://github.com/substack/dnode)
 
-[dnode](https://github.com/substack/dnode) lets you call remote functions
-through any kind of stream.
+[dnode](https://github.com/substack/dnode) faz uma chamada remota de funções
+através de qualquer tipo de fluxo.
 
-Here's a basic dnode server:
+Aqui um basico servidor utilizando o dnode:
 
 ``` js
 var dnode = require('dnode');
@@ -820,8 +823,7 @@ var server = net.createServer(function (c) {
 server.listen(5004);
 ```
 
-then you can hack up a simple client that calls the server's `.transform()`
-function:
+Em seguida você pode interceptar um cliente que esta fazendo uma chamada para o servidor utilizando a função `.transform()`:: 
 
 ``` js
 var dnode = require('dnode');
@@ -839,23 +841,23 @@ var c = net.connect(5004);
 c.pipe(d).pipe(c);
 ```
 
-Fire up the server, then when you run the client you should see:
+Acionando o servidor, quando você executar o cliente provavelmente você vera:
 
 ```
 $ node client.js
 beep => BOOP
 ```
 
-The client sent `'beep'` to the server's `transform()` function and the server
-called the client's callback with the result, neat!
+O cliente envia `'beep'` para o servidor utilizando a função `transform()` e
+o servidor avisa o cliente já com o resultado, puro!
 
-The streaming interface that dnode provides here is a duplex stream since both
-the client and server are piped to each other (`c.pipe(d).pipe(c)`) with
-requests and responses coming from both sides.
+A interface de fluxo do dnode fornce aqui um fluxo duplex onde ambos o cliente e servidor
+canalizando uns aos outros (`c.pipe(d).pipe(c)`) com requisições e respostas dos
+dois lados.
 
-The craziness of dnode begins when you start to pass function arguments to
-stubbed callbacks. Here's an updated version of the previous server with a
-multi-stage callback passing dance:
+A loucura do dnode incia-se quando você começa passando argumentos a uma função
+que tem os callbacks arrancados. Aqui uma versão atualizada do servidor anterior com um
+callback multi-estágio passando dança:
 
 ``` js
 var dnode = require('dnode');
@@ -876,7 +878,7 @@ var server = net.createServer(function (c) {
 server.listen(5004);
 ```
 
-Here's the updated client:
+Aqui o cliente atualizado:
 
 ``` js
 var dnode = require('dnode');
@@ -896,34 +898,32 @@ var c = net.connect(5004);
 c.pipe(d).pipe(c);
 ```
 
-After we spin up the server, when we run the client now we get:
+Depois você gira o servidor, onde nós executamos o cliente que agora tem:
 
 ```
 $ node client.js
 beep:10 => BOOOOOOOOOOP
 ```
 
-It just works!™
+Ele simplesmente funciona!™
 
-The basic idea is that you just put functions in objects and you call them from
-the other side of a stream and the functions will be stubbed out on the other
-end to do a round-trip back to the side that had the original function in the
-first place. The best thing is that when you pass functions to a stubbed
-function as arguments, those functions get stubbed out on the *other* side!
+A ideia basica é essa onde você somente coloca funções em objetos e as chama do outro
+lado de um fluxo e funções são arrancadas fora com uma outra finalização a fazer voltando
+ao estado inicial. A melhor coisa é essa onde você passa funções para uma funcão que dispara
+funções, essas funções são disparadas do *outro* lado!
 
-This approach of stubbing function arguments recursively shall henceforth be
-known as the "turtles all the way down" gambit. The return values of any of your
-functions will be ignored and only enumerable properties on objects will be
-sent, json-style.
+Esta abordagem para disparar argumentos que são funções recursivamente será chamada adorávelmente
+de "todas as tartarugas vão abaixo" que vai afinando. Os valores retornados de todas as nossas funções
+são ignorados e são enumeradas em um objeto que é enviado no estilo json.
 
-It's turtles all the way down!
+São tartarugas por todo o caminho abaixo!
 
 ![turtles all the way](http://substack.net/images/all_the_way_down.png)
 
-Since dnode works in node or on the browser over any stream it's easy to call
-functions defined anywhere and especially useful when paired up with
-[mux-demux](https://github.com/dominictarr/mux-demux) to multiplex an rpc stream
-for control alongside some bulk data streams.
+Dnode trabalha no node or nos navegadores por meio de fluxos é totalmente facíl de
+chamar funções definidas em qualquer lugar e especialmente util onde emparelham com 
+[mux-demux](https://github.com/dominictarr/mux-demux) com multiplex em um fluxo rpc
+para controlar um volumos fluxo de dados.
 
 ## [rpc-stream](https://github.com/dominictarr/rpc-stream)
 
@@ -941,27 +941,28 @@ for control alongside some bulk data streams.
 
 ## distributed partition-tolerant chat
 
-The [append-only](http://github.com/Raynos/append-only) module can give us a
-convenient append-only array on top of
+O módulo [acrescentar apenas](http://github.com/Raynos/append-only) pode nos dar uma
+conveniente lista de itens acrescentados apenas com uma regra personalizada feito em cima do
 [scuttlebutt](https://github.com/dominictarr/scuttlebutt)
-which makes it really easy to write an eventually-consistent, distributed chat
-that can replicate with other nodes and survive network partitions.
+que faz do trabalho de escrever algo realmente simples com uma eventualidade consistente, chat distribuido
+pode replicar com outros nós e a fazer com que partições da rede sobreviva.
 
 TODO: the rest
 
-## roll your own socket.io
+## faça o seu proprio socket.io
 
-We can build a socket.io-style event emitter api over streams using some of the
-libraries mentioned earlier in this document.
+Nós podemos construir algo no estilo do socket.io com uma api de emição de eventos através de fluxos
+usando muitas das libs mencionadas anteriormente neste documento.
 
-First  we can use [shoe](http://github.com/substack/shoe)
-to create a new websocket handler server-side and
-[emit-stream](https://github.com/substack/emit-stream)
-to turn an event emitter into a stream that emits objects.
-The object stream can then be fed into
+Primeiro você usa o [tênis](http://github.com/substack/shoe) 
+para criar um novo lidador de websocket do lado do servidor e um
+[emissor de fluxo](https://github.com/substack/emit-stream)
+para transformar um emissor de evento em um fluxo que emite objetos.
+O fluxo de objeto pode ser alimentado assim
 [JSONStream](https://github.com/dominictarr/JSONStream)
-to serialize the objects and from there the serialized stream can be piped into
-the remote browser.
+para serializer os objetos e de um fluxo serializado pode canalizar
+para um navegador remoto.
+
 
 ``` js
 var EventEmitter = require('events').EventEmitter;
@@ -979,8 +980,8 @@ var sock = shoe(function (stream) {
 });
 ```
 
-Inside the shoe callback we can emit events to the `ev` function.  Here we'll
-just emit different kinds of events on intervals:
+Dentro do callback do tênis nós podemos emitir eventos para a função `ev`. Até aqui tudo bem
+somente emite diferentes tipos para eventos em intervalos:
 
 ``` js
 var intervals = [];
@@ -998,7 +999,7 @@ stream.on('end', function () {
 });
 ```
 
-Finally the shoe instance just needs to be bound to an http server:
+Finalmente a instancia de tênis somente tem que estar vinculada a um servidor http:
 
 ``` js
 var http = require('http');
@@ -1008,9 +1009,9 @@ server.listen(8080);
 sock.install(server, '/sock');
 ```
 
-Meanwhile on the browser side of things just parse the json shoe stream and pass
-the resulting object stream to `eventStream()`. `eventStream()` just returns an
-event emitter that emits the server-side events:
+Entretanto do lado do navegador para somente analisar coisas o fluxo do tênis esta em json e
+passando o objeto resultando do fluxo para `eventStream()`. Somente `eventStream()` retorna um
+emissor de eventos isso emite eventos do lado do servidor:
 
 ``` js
 var shoe = require('shoe');
@@ -1038,19 +1039,21 @@ Use [browserify](https://github.com/substack/node-browserify) to build this
 browser source code so that you can `require()` all these nifty modules
 browser-side:
 
+User o [browserify](https://github.com/substack/node-browserify) para construir
+este código para o navegador então você podera usar `require()` para todos esses módulos
+bacanas do lado do navegador:
+
 ```
 $ browserify main.js -o bundle.js
 ```
 
-Then drop a `<script src="/bundle.js"></script>` into some html and open it up
-in a browser to see server-side events streamed through to the browser side of
-things.
+Somente quando você colocar `<script src="/bundle.js"></script>` no html e executar em um
+navagador para ver os eventos mostrando os fluxos desse lado e mostrando as coisas funcionando. 
 
-With this streaming approach you can rely more on tiny reusable components that
-only need to know how to talk streams. Instead of routing messages through a
-global event system socket.io-style, you can focus more on breaking up your
-application into tinier units of functionality that can do exactly one thing
-well.
+Com essa abordagem de fluxo você pode depender de mais componentes reutilizaveis sendo 
+necessario saber como os fluxos conversam. Em vez de mensagens roteadas através de um sistema evento
+global no estilo do socket.io, você pode focar em mais em espadaçar a sua aplicação
+em pequenas unidades de funcionalidade que fazem uma coisa bem.
 
 For instance you can trivially swap out JSONStream in this example for
 [stream-serializer](https://github.com/dominictarr/stream-serializer)
