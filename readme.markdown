@@ -1055,32 +1055,32 @@ necessario saber como os fluxos conversam. Em vez de mensagens roteadas através
 global no estilo do socket.io, você pode focar em mais em espadaçar a sua aplicação
 em pequenas unidades de funcionalidade que fazem uma coisa bem.
 
-For instance you can trivially swap out JSONStream in this example for
+Para cada instancia você pode trivialmente trocar JSONStram deste exemplo por
 [stream-serializer](https://github.com/dominictarr/stream-serializer)
-to get a different take on serialization with a different set of tradeoffs.
-You could bolt layers over top of shoe to handle
-[reconnections](https://github.com/dominictarr/reconnect) or heartbeats
-using simple streaming interfaces.
-You could even add a stream into the chain to use namespaced events with
-[eventemitter2](https://npmjs.org/package/eventemitter2) instead of the
-EventEmitter in core.
+para pegar uma serialização diferente com uma configuração deiferente de compensações.
+Você poderia fugir das camadas de cima do tênis para lidar com
+[reconexões](https://github.com/dominictarr/reconnect) ou batimentos cardíacos
+usando uma interface simples para os fluxos.
+Você pode até mesmo adicionar um fluxo em cada espaço nomeado de eventos encadeados com
+[eventemitter2](https://npmjs.org/package/eventemitter2) no lugar
+do emissor de evento do núcleo do node.
 
-If you want some different streams that act in different ways it would likewise
-be pretty simple to run the shoe stream in this example through mux-demux to
-create separate channels for each different kind of stream that you need.
+Se você precisar de fluxos diferentes para agir de diferentes formas seria igualmente
+mais simples executar o fluxo do tênis em um exemplo através do mux-demux para
+criar canais separados para cada tipo diferente de fluxo que precisar.
 
-As the requirements of your system evolve over time, you can swap out each of
-these streaming pieces as necessary without as many of the all-or-nothing risks
-that more opinionated framework approaches necessarily entail.
+Como os requerimentos do seu sistema envolvem através do tempo, você pode trocar
+para cada pedaço necessario do fluxo com muitos ou nenhum risco
+isso implica mais em uma abordagem opinativa de um framework.
 
-## html streams for the browser and the server
+## fluxos html para navegador e o servidor
 
-We can use some streaming modules to reuse the same html rendering logic for the
-client and the server! This approach is indexable, SEO-friendly, and gives us
-realtime updates.
+Nós podemos usar muitos módulos de fluxo reutilizando a mesma lógica de processamentod o html para o
+cliente e o servidor! Essa abordagem é indexavel, SEO-friendly, e nos dá
+atulizações em tempo real.
 
-Our renderer takes lines of json as input and returns html strings as its
-output. Text, the universal interface!
+Nosso processamento tem linhas de json como entrada e retornando `strings` de html
+como saida. Texto, é uma interface universal!
 
 render.js:
 
@@ -1109,7 +1109,13 @@ and [hyperglue](https://github.com/substack/hyperglue) to update html based on
 css selectors. You don't need to use hyperglue necessarily here; anything that
 can return a string with html in it will work.
 
-The `row.html` used is just a really simple stub thing:
+Nós podemos usar [brfs](http://github.com/substack/brfs) para chamada em linha
+`fs.readFileSync` para o código do navegador
+e [hyperglue](https://github.com/substack/hyperglue) para atualizar o html baseado em
+seletores css. Você não precisa usar a hipder-cóla necessariamente aqui; de qualquer maneira
+pode-se retornar uma `string` com html que funcionara.
+
+O `row.html` usado somente para arrancar isso:
 
 row.html:
 
@@ -1120,10 +1126,10 @@ row.html:
 </div>
 ```
 
-The server will just use [slice-file](https://github.com/substack/slice-file) to
-keep everything simple. [slice-file](https://github.com/substack/slice-file) is
-little more than a glorified `tail/tail -f` api but the interfaces map well to
-databases with regular results plus a changes feed like couchdb.
+O servidor usara somente [slice-file](https://github.com/substack/slice-file) para
+manter tudo de modo simples. [slice-file](https://github.com/substack/slice-file) é
+mais pequeno que uma api glorificada de `tail/tail -f` mas as insterfaces são bem mapeadas
+para bancos de dados com resultados regulares mais as mudanças alimentadas como couchdb.
 
 server.js:
 
@@ -1157,14 +1163,14 @@ var sock = shoe(function (stream) {
 sock.install(server, '/sock');
 ```
 
-The first part of the server handles the `/` route and streams the last 5 lines
-from `data.txt` into the `#rows` div.
+A primeira parte do servidor lida com a rota `/` e fluxos das últimas 5 linhas
+do `data.txt` na div `#rows`.
 
-The second part of the server handles realtime updates to `#rows` using
-[shoe](http://github.com/substack/shoe), a simple streaming websocket polyfill.
+A segunda parte do servidor lida com atualizações em tempo real para `#rows` usando
+[tênis](http://github.com/substack/shoe), um simples polyfill para websocket. 
 
-Next we can write some simple browser code to populate the realtime updates
-from [shoe](http://github.com/substack/shoe) into the `#rows` div:
+O proximo passo sera escrever alguns código para nevegador que popule as atualizações
+do [tênis](http://github.com/substack/shoe) na dic `#rows`:
 
 ``` js
 var through = require('through');
@@ -1182,32 +1188,35 @@ stream.pipe(render()).pipe(through(function (html) {
 Just compile with [browserify](http://browserify.org) and
 [brfs](http://github.com/substack/brfs):
 
+Apenas compile com [browserify](http://browserify.org) e 
+[brfs](http://github.com/substack/brfs):
+
 ```
 $ browserify -t brfs browser.js > static/bundle.js
 ```
 
-And that's it! Now we can populate `data.txt` with some silly data:
+E é isso! agora nós podemos popular `data.txt` com os dados:
 
 ```
 $ echo '{"who":"substack","message":"beep boop."}' >> data.txt
 $ echo '{"who":"zoltar","message":"COWER PUNY HUMANS"}' >> data.txt
 ```
 
-then spin up the server:
+gire o servidor:
 
 ```
 $ node server.js
 ```
 
-then navigate to `localhost:8000` where we will see our content. If we add some
-more content:
+e navegue até `localhost:8000` onde você ira ver o nosso conteudo. Se nós adicionarmos
+mais conteudo:
 
 ```
 $ echo '{"who":"substack","message":"oh hello."}' >> data.txt
 $ echo '{"who":"zoltar","message":"HEAR ME!"}' >> data.txt
 ```
 
-then the page updates automatically with the realtime updates, hooray!
+quando a pagina atualizar automaticamente em tempo real, hooray!
 
-We're now using exactly the same rendering logic on both the client and the
-server to serve up SEO-friendly, indexable realtime content. Hooray!
+Agora estamos usando a mesma lógica de processamento em ambos... cliente e o servidor
+para servir conteudo do tipo SEO-friendly, indexavel e com conteudo em tempo real. Hooray!
