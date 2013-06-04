@@ -37,13 +37,6 @@ Você pode conectar o fluxo de saida em uma entrada de uma outra lib e
 [usar libs](http://npmjs.org) que operam de modo abstrato em outros streams para
 instituir o controle do fluxo de um alto-nivel.
 
-Streams are an important component of
-[small-program design](https://michaelochurch.wordpress.com/2012/08/15/what-is-spaghetti-code/)
-and [unix philosophy](http://www.faqs.org/docs/artu/ch01s06.html)
-but there are many other important abstractions worth considering.
-Just remember that [technical debt](http://c2.com/cgi/wiki?TechnicalDebt)
-is the enemy and to seek the best abstractions for the problem at hand.
-
 Streams são um importante component de
 [projeção para pequenos programas](https://michaelochurch.wordpress.com/2012/08/15/what-is-spaghetti-code/)
 e podendo seguir a [filosofia do unix](http://www.faqs.org/docs/artu/ch01s06.html)
